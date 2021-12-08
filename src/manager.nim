@@ -8,7 +8,7 @@ import std/[httpclient, json, strformat, times, math, strutils, osproc, os], nim
 
 const 
     node = "https://denaro-node.gaetano.eu.org" # node address
-    address = "412299560afb40762d40b6aed5eabd92517460b712b99299ffb4a004ea84329a1a2648c9bb78746e60cc3081e9608e0b19a91639e8df86a63bdeee06ea15740f" # address to send to
+    address = "412299560afb40762d40b6aed5eabd92517460b712b99299ffb4a004ea84329a1a2648c9bb78746e60cc3081e9608e0b19a91639e8df86a63bdeee06ea15740f" # address of your wallet
 
 proc getMiningInfo(client: HttpClient, node: string): JsonNode =
     parseJson(client.getContent(fmt"{node}/get_mining_info"))
