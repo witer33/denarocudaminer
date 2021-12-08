@@ -4,11 +4,10 @@ import std/[httpclient, json, strformat, times, math, strutils, osproc, os], nim
 # This program starts the cuda miner giving it the informations needed to mine.
 # To work properly, you need to compile the cuda miner and name it cuda_miner.exe.
 # Then you need to put the cuda_miner.exe in the same folder as this program.
-# If you want change the node address, then change address, use the public key of your wallet.
 
-const 
-    node = "https://denaro-node.gaetano.eu.org" # node address
-    address = "412299560afb40762d40b6aed5eabd92517460b712b99299ffb4a004ea84329a1a2648c9bb78746e60cc3081e9608e0b19a91639e8df86a63bdeee06ea15740f" # address of your wallet
+let args = commandLineParams()
+let node = string(args[0])
+let address = string(args[1])
 
 proc getMiningInfo(client: HttpClient, node: string): JsonNode =
     parseJson(client.getContent(fmt"{node}/get_mining_info"))
@@ -83,7 +82,7 @@ while true:
 
     echo fmt"Starting mining of block {mining_info.last_block.id + 1} with difficulty {difficulty}"
 
-    let prefix = hexToBytesSeq(mining_info.last_block.hash) & @(address.toDigest.data) & @(getTransactionsMerkleTree(pending_transactions).data) & uint32ToBytes(uint32(now().utc.toTime().toUnix())) & int16ToBytes(int16(difficulty * 10))
+    let prefix = hexToBytesSeq(mining_info.last_block.hash) & cast[seq[byte]](address) & @(getTransactionsMerkleTree(pending_transactions).data) & uint32ToBytes(uint32(now().utc.toTime().toUnix())) & int16ToBytes(int16(difficulty * 10))
     let cache = buildCache(difficulty, mining_info.last_block.hash)
     var client = newHttpClient()
 
