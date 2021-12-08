@@ -29,6 +29,9 @@ proc int16ToBytes(x: int16): seq[byte] =
 proc hexToBytesSeq(hex: string): seq[byte] =
     @(MDigest[256].fromHex(hex).data)
 
+proc hexToBytesSeq64(hex: string): seq[byte] =
+    @(MDigest[512].fromHex(hex).data)
+
 proc getTransactionsMerkleTree(transactions: seq[string]): MDigest[256] =
     var bytes = newSeq[byte]()
     for transaction in transactions:
@@ -82,7 +85,10 @@ while true:
 
     echo fmt"Starting mining of block {mining_info.last_block.id + 1} with difficulty {difficulty}"
 
-    let prefix = hexToBytesSeq(mining_info.last_block.hash) & cast[seq[byte]](address) & @(getTransactionsMerkleTree(pending_transactions).data) & uint32ToBytes(uint32(now().utc.toTime().toUnix())) & int16ToBytes(int16(difficulty * 10))
+    let prefix = hexToBytesSeq(mining_info.last_block.hash) & hexToBytesSeq64(address) & @(getTransactionsMerkleTree(pending_transactions).data) & uint32ToBytes(uint32(now().utc.toTime().toUnix())) & int16ToBytes(int16(difficulty * 10))
+    if prefix.len() != 134:
+        echo "Invalid prefix length"
+        continue
     let cache = buildCache(difficulty, mining_info.last_block.hash)
     var client = newHttpClient()
 
