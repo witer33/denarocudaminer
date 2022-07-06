@@ -1,6 +1,6 @@
 # denarocudaminer
 A fast GPU miner for denaro blockchain.
-_only working on Windows._
+_only working on Windows._ (not working)
 
 ## Cuda
 To compile and run this you need Nvidia Cuda toolkit, with a Nvidia GPU.
